@@ -84,7 +84,7 @@ loop do
     next
   end
 
-  if board.wins? row, col, current_player
+  if board.wins? current_player
     puts "#{current_player} wins!"
     exit
   end
