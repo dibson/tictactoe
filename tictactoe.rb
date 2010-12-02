@@ -6,6 +6,10 @@ module TicTacToe
   class CellOccupiedError < TicTacToeError; end;
   class BadRowColError < TicTacToeError; end;
 
+  def self.get_player_cycle
+    [:X, :O].cycle
+  end
+
   class Board
   
     DIM = 2
@@ -87,7 +91,7 @@ end
 
 board   = TicTacToe::Board.new
 
-players = [:X, :O].cycle
+players = TicTacToe::get_player_cycle
 
 current_player = players.next 
 
@@ -112,12 +116,14 @@ loop do
 
   if board.wins? current_player
     puts board
+    puts
     puts "#{current_player} wins!"
     exit
   end
 
   if board.draw?
     puts board
+    puts
     puts "It's a draw!"
     exit
   end
