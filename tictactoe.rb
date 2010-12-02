@@ -12,7 +12,7 @@ current_player = players.next
 
 loop do
   puts board.map { |row| row.map { |e| e || " " }.join("|") }.join("\n")
-  print "\n>> "
+  print "\n #{current_player} >> "
   row, col = gets.split.map { |e| e.to_i }
   puts
 
