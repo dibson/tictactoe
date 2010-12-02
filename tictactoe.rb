@@ -1,16 +1,43 @@
 module TicTacToe
   class OutOfBoundsError < StandardError; end;
   class CellOccupiedError < StandardError; end;
+  class BadRowColError < StandardError; end;
 
   class Board
 
     def initialize()
-      @cells = [[nil,nil,nil],
-                [nil,nil,nil],
-                [nil,nil,nil]]
+      @size = 3
+
+      @cells = []
+      @size.times { @cells << Array.new(@size) }
+
+      @lines = []
+
+      # add diaganols
+      @lines << (0...@size).map { |n| [n,n] }
+      @lines << (0...@size).map { |n| [n, @size - n - 1] }
+
+      # add horiz lines
+      @lines += (0...@size).map do |row|
+        row_line = []
+        (0...@size).each { |col| row_line << [row, col] }
+        row_line
+      end
+
+      # add vert lines
+      @lines += (0...@size).map do |col|
+        col_line = []
+        (0...@size).each { |row| col_line << [row, col] }
+        col_line
+      end
+
     end
 
     def fill_cell(row, col, token)
+
+      if row.nil? or col.nil? or !(row.integer? and col.integer?)
+        raise BadRowColError
+      end
 
       begin
         cell_contents = @cells.fetch(row).fetch(col)
@@ -28,26 +55,9 @@ module TicTacToe
 
     def wins? token
 
-      lines = [
-                [[0,0],[1,1],[2,2]], # diag from tl to br
-                [[2,0],[1,1],[0,2]], # diage from bl to tr
-
-                # horiz lines
-                [[0,0], [0,1], [0,2]],
-                [[1,0], [1,1], [1,2]],
-                [[2,0], [2,1], [2,2]],
-
-                # vert lines
-                [[0,0], [1,0], [2,2]],
-                [[0,1], [1,1], [2,1]],
-                [[0,2], [1,2], [2,2]],
-              ]
-
-      win = lines.any? do |line|
+      @lines.any? do |line|
         line.all? { |row,col| @cells[row][col] == token }
       end
-
-      return win
 
     end
 
@@ -82,14 +92,19 @@ loop do
   rescue TicTacToe::CellOccupiedError
     puts "Cell is occupied"
     next
+  rescue TicTacToe::BadRowColError
+    puts "Bad row/col entered - enter two integers separated by a space"
+    next
   end
 
   if board.wins? current_player
+    puts board
     puts "#{current_player} wins!"
     exit
   end
 
   if board.draw?
+    puts board
     puts "It's a draw!"
     exit
   end
