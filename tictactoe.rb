@@ -1,16 +1,23 @@
 module TicTacToe
+
   class OutOfBoundsError < StandardError; end;
   class CellOccupiedError < StandardError; end;
   class BadRowColError < StandardError; end;
 
   class Board
+  
+    DIM = 2
 
-    def initialize()
-      @size = 3
+    # Initialize a tic-tac-toe board
+    def initialize(size=3)
 
+      @size = size
+
+      # make game board
       @cells = []
       @size.times { @cells << Array.new(@size) }
 
+      # make possible winning lines
       @lines = []
 
       # add diaganols
@@ -33,6 +40,7 @@ module TicTacToe
 
     end
 
+    # fill board position with given token
     def fill_cell(row, col, token)
 
       if row.nil? or col.nil? or !(row.integer? and col.integer?)
@@ -53,6 +61,7 @@ module TicTacToe
 
     end
 
+    # true if this token has won the game
     def wins? token
 
       @lines.any? do |line|
@@ -61,10 +70,12 @@ module TicTacToe
 
     end
 
+    # true if no more moves can be played
     def draw?
-      @cells.flatten.compact.length == 9
+      @cells.flatten.compact.length == @size**DIM
     end
 
+    # string representation of board
     def to_s
       @cells.map { |row| row.map { |e| e || " " }.join("|") }.join("\n")
     end
