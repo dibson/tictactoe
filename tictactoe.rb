@@ -6,10 +6,6 @@ module TicTacToe
   class CellOccupiedError < TicTacToeError; end;
   class BadRowColError < TicTacToeError; end;
 
-  def self.get_player_cycle
-    [:X, :O].cycle
-  end
-
   class Board
   
     DIM = 2
@@ -89,13 +85,10 @@ module TicTacToe
   end
 end
 
-board   = TicTacToe::Board.new
+board = TicTacToe::Board.new
 
-players = TicTacToe::get_player_cycle
+[:X, :O].cycle do |current_player|
 
-current_player = players.next 
-
-loop do
   puts board
   print "\n #{current_player} >> "
   row, col = gets.split.map { |e| e.to_i }
@@ -128,5 +121,4 @@ loop do
     exit
   end
 
-  current_player = players.next 
 end
