@@ -1,8 +1,10 @@
 module TicTacToe
 
-  class OutOfBoundsError < StandardError; end;
-  class CellOccupiedError < StandardError; end;
-  class BadRowColError < StandardError; end;
+  class TicTacToeError < StandardError; end;
+
+  class OutOfBoundsError < TicTacToeError; end;
+  class CellOccupiedError < TicTacToeError; end;
+  class BadRowColError < TicTacToeError; end;
 
   class Board
   
