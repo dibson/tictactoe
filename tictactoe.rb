@@ -4,8 +4,6 @@ module TicTacToe
 
   class Board
 
-    attr_reader :cells
-
     def initialize()
       @cells = [[nil,nil,nil],
                 [nil,nil,nil],
@@ -28,19 +26,22 @@ module TicTacToe
 
     end
 
-    def wins? (row, col, token)
+    def wins? token
 
-      lines = []
+      lines = [
+                [[0,0],[1,1],[2,2]], # diag from tl to br
+                [[2,0],[1,1],[0,2]], # diage from bl to tr
 
-      left_diagonal = [[0,0],[1,1],[2,2]]
-      right_diagonal = [[2,0],[1,1],[0,2]]
+                # horiz lines
+                [[0,0], [0,1], [0,2]],
+                [[1,0], [1,1], [1,2]],
+                [[2,0], [2,1], [2,2]],
 
-      [left_diagonal, right_diagonal].each do |line|
-        lines << line if line.include?([row,col])
-      end
-
-      lines << (0..2).map { |c1| [row, c1] }
-      lines << (0..2).map { |r1| [r1, col] }
+                # vert lines
+                [[0,0], [1,0], [2,2]],
+                [[0,1], [1,1], [2,1]],
+                [[0,2], [1,2], [2,2]],
+              ]
 
       win = lines.any? do |line|
         line.all? { |row,col| @cells[row][col] == token }
