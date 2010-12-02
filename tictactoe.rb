@@ -1,3 +1,7 @@
+# TicTacToe module
+#
+# Write your own TicTacToe with the given board class,
+# or just play on command-line with TicTacToe.play
 module TicTacToe
 
   class TicTacToeError < StandardError; end;
@@ -6,11 +10,55 @@ module TicTacToe
   class CellOccupiedError < TicTacToeError; end;
   class BadRowColError < TicTacToeError; end;
 
+  # play a game of tic tac toe
+  def self.play
+    board = TicTacToe::Board.new
+
+    [:X, :O].cycle do |current_player|
+
+      puts board
+      print "\n #{current_player} >> "
+      row, col = gets.split.map { |e| e.to_i }
+      puts
+
+      begin
+        board.fill_cell(row, col, current_player)
+      rescue TicTacToe::OutOfBoundsError
+        puts "Row/Col are out of bounds"
+        next
+      rescue TicTacToe::CellOccupiedError
+        puts "Cell is occupied"
+        next
+      rescue TicTacToe::BadRowColError
+        puts "Bad row/col entered - enter two integers separated by a space"
+        next
+      end
+
+      if board.wins? current_player
+        puts board
+        puts
+        puts "#{current_player} wins!"
+        exit
+      end
+
+      if board.filled?
+        puts board
+        puts
+        puts "It's a draw!"
+        exit
+      end
+    
+    end
+  end
+
+  # a tic tac toe board
+  # 
+  # does not play a game, use play method or implement your own with this class
   class Board
   
     DIM = 2
 
-    # Initialize a tic-tac-toe board
+    # Initialize a tic-tac-toe board of given size
     def initialize(size=3)
 
       @size = size
@@ -43,6 +91,9 @@ module TicTacToe
     end
 
     # fill board position with given token
+    #
+    # note: it will take any token you give it, so you can play with
+    #       more players, but that's probably silly
     def fill_cell(row, col, token)
 
       if row.nil? or col.nil? or !(row.integer? and col.integer?)
@@ -73,7 +124,7 @@ module TicTacToe
     end
 
     # true if no more moves can be played
-    def draw?
+    def filled?
       @cells.flatten.compact.length == @size**DIM
     end
 
@@ -85,40 +136,4 @@ module TicTacToe
   end
 end
 
-board = TicTacToe::Board.new
-
-[:X, :O].cycle do |current_player|
-
-  puts board
-  print "\n #{current_player} >> "
-  row, col = gets.split.map { |e| e.to_i }
-  puts
-
-  begin
-    board.fill_cell(row, col, current_player)
-  rescue TicTacToe::OutOfBoundsError
-    puts "Row/Col are out of bounds"
-    next
-  rescue TicTacToe::CellOccupiedError
-    puts "Cell is occupied"
-    next
-  rescue TicTacToe::BadRowColError
-    puts "Bad row/col entered - enter two integers separated by a space"
-    next
-  end
-
-  if board.wins? current_player
-    puts board
-    puts
-    puts "#{current_player} wins!"
-    exit
-  end
-
-  if board.draw?
-    puts board
-    puts
-    puts "It's a draw!"
-    exit
-  end
-
-end
+TicTacToe::play
