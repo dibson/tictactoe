@@ -12,17 +12,21 @@ module TicTacToe
 
   # play a game of tic tac toe
   def self.play
+
     board = TicTacToe::Board.new
+    players = PlayerManager.new
 
-    [:X, :O].cycle do |current_player|
+    loop do
 
+      # get user input
       puts board
-      print "\n #{current_player} >> "
+      puts
+      print "\n #{players.current} >> "
       row, col = gets.split.map { |e| e.to_i }
       puts
 
       begin
-        board.fill_cell(row, col, current_player)
+        board.fill_cell(row, col, players.current)
       rescue TicTacToe::OutOfBoundsError
         puts "Row/Col are out of bounds"
         next
@@ -34,21 +38,39 @@ module TicTacToe
         next
       end
 
-      if board.wins? current_player
+      if board.wins? players.current
         puts board
         puts
-        puts "#{current_player} wins!"
-        exit
+        puts "#{players.current} wins!"
+        return players.current
       end
 
       if board.filled?
         puts board
         puts
         puts "It's a draw!"
-        exit
+        return false
       end
+
+      players.next_player
     
     end
+  end
+
+  # manage a cycle of players
+  class PlayerManager
+
+    attr_reader :current
+
+    def initialize(players=[:X, :O])
+      @players_cycle = players.cycle
+      self.next_player
+    end
+
+    def next_player
+      @current = @players_cycle.next
+    end
+
   end
 
   # a tic tac toe board
@@ -57,6 +79,7 @@ module TicTacToe
   class Board
   
     DIM = 2
+    attr_reader :size, :cells
 
     # Initialize a tic-tac-toe board of given size
     def initialize(size=3)
